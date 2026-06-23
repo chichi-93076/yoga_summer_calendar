@@ -145,7 +145,16 @@
               minute: '2-digit',
               hour12: false 
             },
-            displayEventTime: true 
+            displayEventTime: true,
+            // 👑 2. 新增動態監聽：當學員旋轉手機螢幕或縮放視窗時，自動切換最適合的排版
+            windowResize: function(arg) {
+              if (window.innerWidth < 768) {                
+                calendar.changeView('listMonth');                
+              } else {
+                calendar.changeView('dayGridMonth');
+              }
+            }
+             
           });
 
           calendar.render();
