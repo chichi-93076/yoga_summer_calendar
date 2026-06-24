@@ -82,6 +82,12 @@
       
       /* 稍微縮小日期的數字大小 */
       .fc-daygrid-day-number { font-size: 14px; }
+
+      /* ✨ 新增：強制拉高每一天格子的最小高度，讓整個月曆變長 */
+      .fc .fc-daygrid-day-frame {
+        min-height: 90px; /* 您可以隨時依據喜好調整數值，例如 100px 或 120px */
+      }
+
     }
   </style>
 </head>
@@ -127,9 +133,15 @@
             };
           });
 
+
           const calendarEl = document.getElementById('calendar');
           const calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
+            initialView: window.innerWidth < 768 ? 'listMonth' : 'dayGridMonth',
+            
+            // 👑 關鍵修改：如果是手機螢幕，整個行事曆高度強制設定為 650px；電腦版則維持預設的 'auto'
+            // (您可以把 650 改成 700 或 800，找出您覺得最舒服的視覺長度)
+            height: window.innerWidth < 768 ? 650 : 'auto',
+            
             locale: 'zh-tw',
             headerToolbar: {
               left: 'prev,next today',
@@ -137,24 +149,18 @@
               right: 'dayGridMonth,listMonth'
             },
             events: eventsData,
+            displayEventTime: false, 
             
-            // 👑 關鍵新增：設定為 false 即可隱藏事件上的時間（如 16:45）
-            // 👑 關鍵設定：時間顯示 24小時制，取消 AM/PM
-            eventTimeFormat: { 
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false 
-            },
-            displayEventTime: true,
-            // 👑 2. 新增動態監聽：當學員旋轉手機螢幕或縮放視窗時，自動切換最適合的排版
+            // 動態監聽：確保學員翻轉手機螢幕時，高度與排版也會無縫切換
             windowResize: function(arg) {
-              if (window.innerWidth < 768) {                
-                calendar.changeView('listMonth');                
+              if (window.innerWidth < 768) {
+                calendar.changeView('listMonth');
+                calendar.setOption('height', 650); // 切換回手機版高度
               } else {
                 calendar.changeView('dayGridMonth');
+                calendar.setOption('height', 'auto'); // 切換回電腦版高度
               }
             }
-
           });
 
           calendar.render();
