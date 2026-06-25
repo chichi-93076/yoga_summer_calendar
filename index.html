@@ -149,13 +149,25 @@
               right: 'dayGridMonth,listMonth'
             },
             events: eventsData,
-            displayEventTime: false, 
-            
+            // 👑 關鍵修改：針對不同模式個別控管時間的顯示
+            views: {
+              dayGridMonth: {
+                displayEventTime: false // 當切換到「月曆」時，隱藏時間
+              },
+              listMonth: {
+                displayEventTime: true  // 當切換到「列表」時，顯示時間
+              }
+            },
+            eventTimeFormat: { 
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false 
+            },
             // 動態監聽：確保學員翻轉手機螢幕時，高度與排版也會無縫切換
             windowResize: function(arg) {
               if (window.innerWidth < 768) {
                 calendar.changeView('listMonth');
-                calendar.setOption('height', 650); // 切換回手機版高度
+                calendar.setOption('height', 650); // 切換回手機版高度                
               } else {
                 calendar.changeView('dayGridMonth');
                 calendar.setOption('height', 'auto'); // 切換回電腦版高度
